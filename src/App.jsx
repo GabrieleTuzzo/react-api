@@ -1,25 +1,40 @@
 import './App.css';
 import Card from './components/Card/Card';
 import Footer from './components/Footer/Footer';
+import axios from 'axios';
 import posts from './data/posts';
 import Button from './components/Button/Button';
 import FormOverlay from './components/FormOverlay/FormOverlay';
 import { useState, useEffect } from 'react';
 
 function App() {
-    const [drawnPosts, setPosts] = useState(posts);
     const [showOverlay, setShowOverlay] = useState(false);
+    const [drawnPosts, setPosts] = useState();
     const [tags, setTags] = useState([]);
+    const BASIC_URI = 'http://localhost:3000/';
+    const SERVER_IMG_DIR = 'imgs/posts/';
+
+    useEffect(() => {
+        axios
+            .get(BASIC_URI + 'posts')
+            .then((response) => {
+                setPosts(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     useEffect(() => {
         const newTags = [];
-        drawnPosts.forEach((post) => {
-            if (post.published) {
-                post.tags.forEach((tag) => {
-                    !newTags.includes(tag) && newTags.push(tag);
-                });
-            }
-        });
+        drawnPosts &&
+            drawnPosts.forEach((post) => {
+                if (post.published) {
+                    post.tags.forEach((tag) => {
+                        !newTags.includes(tag) && newTags.push(tag);
+                    });
+                }
+            });
         setTags(newTags);
     }, [drawnPosts]);
 
@@ -37,6 +52,14 @@ function App() {
             ...formData,
         };
 
+        axios
+            .post(BASIC_URI + 'posts', newPost)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setPosts([...drawnPosts, newPost]);
         setShowOverlay(false);
     };
@@ -44,6 +67,15 @@ function App() {
     const handleDelete = (id) => {
         const updatedPosts = drawnPosts.filter((post) => post.id !== id);
         setPosts([...updatedPosts]);
+
+        axios
+            .delete(BASIC_URI + 'posts' + `/${id}`)
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     const handleOverlay = () => {
@@ -70,24 +102,29 @@ function App() {
                                 onClick={handleOverlay}
                             ></Button>
                         </div>
-                        {drawnPosts.map((post) => {
-                            return (
-                                post.published && (
-                                    <div key={post.id} className="col-6">
-                                        <Card
-                                            title={post.title}
-                                            image={post.image}
-                                            content={post.content}
-                                            tags={post.tags}
-                                            published={post.published}
-                                            callback={() =>
-                                                handleDelete(post.id)
-                                            }
-                                        ></Card>
-                                    </div>
-                                )
-                            );
-                        })}
+                        {drawnPosts &&
+                            drawnPosts.map((post) => {
+                                return (
+                                    post.published && (
+                                        <div key={post.id} className="col-6">
+                                            <Card
+                                                title={post.title}
+                                                image={
+                                                    BASIC_URI +
+                                                    SERVER_IMG_DIR +
+                                                    post.image
+                                                }
+                                                content={post.content}
+                                                tags={post.tags}
+                                                published={post.published}
+                                                callback={() =>
+                                                    handleDelete(post.id)
+                                                }
+                                            ></Card>
+                                        </div>
+                                    )
+                                );
+                            })}
                     </div>
                 </div>
             </main>
