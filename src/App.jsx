@@ -2,7 +2,6 @@ import './App.css';
 import Card from './components/Card/Card';
 import Footer from './components/Footer/Footer';
 import axios from 'axios';
-import posts from './data/posts';
 import Button from './components/Button/Button';
 import FormOverlay from './components/FormOverlay/FormOverlay';
 import { useState, useEffect } from 'react';
@@ -110,9 +109,11 @@ function App() {
                                             <Card
                                                 title={post.title}
                                                 image={
-                                                    BASIC_URI +
-                                                    SERVER_IMG_DIR +
                                                     post.image
+                                                        ? BASIC_URI +
+                                                          SERVER_IMG_DIR +
+                                                          post.image
+                                                        : ''
                                                 }
                                                 content={post.content}
                                                 tags={post.tags}

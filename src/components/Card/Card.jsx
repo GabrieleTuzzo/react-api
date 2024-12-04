@@ -11,15 +11,24 @@ function Card(props) {
                 alt="card image"
             ></img>
             <div className={style.CardBody}>
-                <h5 className={style.CardTitle}>{props.title}</h5>
-                <div className={style.TagList}>
-                    {props.tags.map((tag, i) => (
-                        <span key={i} className={`${style.Tag} ${style[tag]}`}>
-                            {tag}
-                        </span>
-                    ))}
+                <div className={style.CardContentWrapper}>
+                    <h5 className={style.CardTitle}>{props.title}</h5>
+                    <div className={style.TagList}>
+                        {props.tags.map((tag, i) => (
+                            <span
+                                key={i}
+                                className={
+                                    style[tag]
+                                        ? `${style.Tag} ${style[tag]}`
+                                        : `${style.Tag}`
+                                }
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                    <p>{props.content}</p>
                 </div>
-                <p>{props.content}</p>
                 <div className={style.ButtonWrapper}>
                     <Button value={'Leggi di più'} color={'Blue'}></Button>
                     <Button
