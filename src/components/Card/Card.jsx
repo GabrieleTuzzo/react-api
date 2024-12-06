@@ -1,4 +1,4 @@
-import style from './card.module.css';
+import style from './Card.module.css';
 import Button from '../Button/Button';
 import placeholder from '../../assets/placeholder.webp';
 
